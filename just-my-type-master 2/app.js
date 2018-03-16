@@ -1,69 +1,111 @@
-// Hide uppercase board
 
-$(document).ready()
-$("#keyboard-upper-container").hide();
-
-// Press Shift Key and show uppercase keyboard
-
-$(document).keydown(function (sft) {
-    if (sft.which === 16) {
-        $("#keyboard-upper-container").show();
-        $("#keyboard-lower-container").hide();
+// Shift Key pressed
+let $upperCase = $('#keyboard-upper-container');
+let $lowerCase = $('#keyboard-lower-container');
+$(document).keydown(function(prs){
+    if(prs.which === 16){                                         
+        $upperCase.show();
+        $lowerCase.hide();
     }
-});
-$(document).keyup(function (sft) {
-    if (sft.which === 16) {
-        $("#keyboard-upper-container").hide();
-        $("#keyboard-lower-container").show();
+}).keyup(function(prs){                                          
+    if(prs.which === 16){
+        $upperCase.hide();
+        $lowerCase.show();
     }
+    $('.key').removeClass('keypress');
 });
 
-// Highlight keypressed
+//Check letter of key pressed
 
-$(document).keypress(function (prs) {
-    $("#" + prs.which).css("background-color", "yellow");
-    $("#" + prs.which).fadeOut(200, function () {
-        $("#" + prs.which).fadeIn(200, function () {
-            $("#" + prs.which).css({ "background-color": "#f5f5f5", "border": "1px solid #e3e3e3", "box-shadow": "inset 0 1px 1px rgba(0,0,0,.05)" });
-        }); 
-    });
-    
-});
+let sentences = ['ten ate neite ate nee enet ite ate inet ent eate', 'Too ato too nOt enot one totA not anot tOO aNot', 'oat itain oat tain nate eate tea anne inant nean', 'itant eate anot eat nato inate eat anot tain eat', 'nee ene ate ite tent tiet ent ine ene ete ene ate'];
+let code = 0;
+let counter = 0;
+let line = 0;
+let error = 0;
 
-let sentences = ["ten ate neite ate nee enet ite ate inet ent eate", "Too ato too nOt enot one totA not anot tOO aNot", "oat itain oat tain nate eate tea anne inant nean", "itant eate anot eat nato inate eat anot tain eat", "nee ene ate ite tent tiet ent ine ene ete ene ate"];
-let k = "";
-let i = 0;
-let snt = $("#sentence")
-$(snt).show(function(sent){
-    if (i < sentences.length) {
-        k += sentences[i++];
-        $(snt).text(k);
+function checkLetter(){                                             
+    let getLetter = sentences[line].charCodeAt(counter);
+    if(getLetter === code && counter < sentences[line].length){
+        $('#feedback').append('<i class="glyphicon glyphicon-ok"></i>');
+    }else{
+        $('#feedback').append('<i class="glyphicon glyphicon-remove"></i>');
+        error++;
     }
-    $(document).keypress(function(press){
-        let counter = 0;
-        let error = 0;
-        let line = 0;
-        let sntPress = k[line].charCodeAt(counter);
-        if(press.which === k[i++]){
-            $("#feedback").append("<i class='glyphicon glyphicon-ok'></i>");
-        }else{
-            $("#feedback").append("<i class='glyphicon glyphicon-remove'></i>");
-            error++;
+    $('#yellow-block').animate({'left': '+=17.4px'},100);
+    $('#target-letter').text(sentences[line][counter + 1]);
+}
+
+// Words per minute calculation
+
+let startTimer;
+let endTimer;
+
+function getWPM(){                                      
+    let timer = endTimer - startTimer;
+    let min = Math.floor(timer/60000);
+    let sec = Math.floor((timer%60000)/1000);
+    let time = min + sec/60;
+    return Math.floor((48 - error)/time);
+}
+
+// The test
+
+let gameOver = false;
+
+$(document).keypress(function(prs){
+    code = prs.which;
+    $('#'+ code).addClass('keypress');
+
+    if(!gameOver){
+        if(counter === 0 && line === 0){
+            startTimer = prs.timeStamp;
+        }else if (line === 4 && counter === sentences[line].length - 1){
+            endTimer = prs.timeStamp;
         }
-        $("#yellow-block").animate({"left": "+=17.4px"}, 100);
-        $("#target-letter").text(sentences[line][counter++]);
-    });
+        
+        checkLetter();
+
+        if (counter + 1 < sentences[line].length){
+            counter++;
+        }else if(counter + 1 >= sentences[line].length && line < 4){
+            line++;
+            init(false);
+        }else {
+            $('.key').removeClass('keypress');
+            $('#feedback').text('You typed ' + getWPM() + ' wpm.  Great Job!');
+            setTimeout(function(){
+                let again = confirm('Would you like to try again?');
+                if (again) {
+                    init(true);
+                } else {
+                    gameOver = true;
+                }
+            },2000);
+        }
+    }
 });
 
 
+function init(restart){
+    $upperCase.hide();
+    $lowerCase.show();
+    if (restart){
+        line = 0;
+        error= 0;
+        endTimer = 0;
+        startTimer = 0;
+        gameOver = false;
+    }
+    counter = 0;
+    $('#sentence').text(sentences[line]);   
+    $('#target-letter').text(sentences[line][0]);                    
+    $('#feedback').empty();                                    
+    $('#yellow-block').animate({'left': '12px'});              
+}
 
-    // Target sentence at top of page
-
-//     * The sentences in the provided array should be displayed at the 
-//     * top of the page one sentence at a time. Once the sentence has been completed, 
-//     * the next in line should appear. There is already a div with id="sentence" in your 
-//     * html file. This is where you will display each sentence one at a time.
-// ```
+$(document).ready(function(){
+    init();                                                     
+});
 
 
 
