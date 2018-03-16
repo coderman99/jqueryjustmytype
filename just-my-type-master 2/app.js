@@ -39,7 +39,22 @@ $(snt).show(function(sent){
         k += sentences[i++];
         $(snt).text(k);
     }
+    $(document).keypress(function(press){
+        let counter = 0;
+        let error = 0;
+        let line = 0;
+        let sntPress = k[line].charCodeAt(counter);
+        if(press.which === k[i++]){
+            $("#feedback").append("<i class='glyphicon glyphicon-ok'></i>");
+        }else{
+            $("#feedback").append("<i class='glyphicon glyphicon-remove'></i>");
+            error++;
+        }
+        $("#yellow-block").animate({"left": "+=17.4px"}, 100);
+        $("#target-letter").text(sentences[line][counter++]);
+    });
 });
+
 
 
     // Target sentence at top of page
