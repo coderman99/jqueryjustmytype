@@ -1,7 +1,7 @@
 
 // Shift Key pressed
-let $upperCase = $('#keyboard-upper-container');
-let $lowerCase = $('#keyboard-lower-container');
+let $upperCase = $("#keyboard-upper-container");
+let $lowerCase = $("#keyboard-lower-container");
 $(document).keydown(function(prs){
     if(prs.which === 16){                                         
         $upperCase.show();
@@ -12,27 +12,27 @@ $(document).keydown(function(prs){
         $upperCase.hide();
         $lowerCase.show();
     }
-    $('.key').removeClass('keypress');
+    $(".key").removeClass("keypress");
 });
 
 //Check letter of key pressed
 
-let sentences = ['ten ate neite ate nee enet ite ate inet ent eate', 'Too ato too nOt enot one totA not anot tOO aNot', 'oat itain oat tain nate eate tea anne inant nean', 'itant eate anot eat nato inate eat anot tain eat', 'nee ene ate ite tent tiet ent ine ene ete ene ate'];
+let sentences = ["ten ate neite ate nee enet ite ate inet ent eate", "Too ato too nOt enot one totA not anot tOO aNot", "oat itain oat tain nate eate tea anne inant nean", "itant eate anot eat nato inate eat anot tain eat", "nee ene ate ite tent tiet ent ine ene ete ene ate"];
 let code = 0;
 let counter = 0;
 let line = 0;
 let error = 0;
 
 function checkLetter(){                                             
-    let getLetter = sentences[line].charCodeAt(counter);
-    if(getLetter === code && counter < sentences[line].length){
-        $('#feedback').append('<i class="glyphicon glyphicon-ok"></i>');
+    let check = sentences[line].charCodeAt(counter);
+    if(check === code && counter < sentences[line].length){
+        $("#feedback").append("<i class='glyphicon glyphicon-ok'></i>");
     }else{
-        $('#feedback').append('<i class="glyphicon glyphicon-remove"></i>');
+        $("#feedback").append("<i class='glyphicon glyphicon-remove'></i>");
         error++;
     }
-    $('#yellow-block').animate({'left': '+=17.4px'},100);
-    $('#target-letter').text(sentences[line][counter + 1]);
+    $("#yellow-block").animate({"left": "+=17.4px"},100);
+    $("#target-letter").text(sentences[line][counter + 1]);
 }
 
 // Words per minute calculation
@@ -54,7 +54,7 @@ let gameOver = false;
 
 $(document).keypress(function(prs){
     code = prs.which;
-    $('#'+ code).addClass('keypress');
+    $("#"+ code).addClass("keypress");
 
     if(!gameOver){
         if(counter === 0 && line === 0){
@@ -71,10 +71,10 @@ $(document).keypress(function(prs){
             line++;
             init(false);
         }else {
-            $('.key').removeClass('keypress');
-            $('#feedback').text('You typed ' + getWPM() + ' wpm.  Great Job!');
+            $(".key").removeClass("keypress");
+            $("#feedback").text("You typed " + getWPM() + " wpm.  Great Job!");
             setTimeout(function(){
-                let again = confirm('Would you like to try again?');
+                let again = confirm("Would you like to try again?");
                 if (again) {
                     init(true);
                 } else {
@@ -97,10 +97,10 @@ function init(restart){
         gameOver = false;
     }
     counter = 0;
-    $('#sentence').text(sentences[line]);   
-    $('#target-letter').text(sentences[line][0]);                    
-    $('#feedback').empty();                                    
-    $('#yellow-block').animate({'left': '12px'});              
+    $("#sentence").text(sentences[line]);   
+    $("#target-letter").text(sentences[line][0]);                    
+    $("#feedback").empty();                                    
+    $("#yellow-block").animate({"left": "12px"});              
 }
 
 $(document).ready(function(){
